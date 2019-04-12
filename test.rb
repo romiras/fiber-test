@@ -1,11 +1,6 @@
-require 'rubygems'
-require 'bundler'
-Bundler.setup
-$: << 'lib'
-
 require 'eventmachine'
-require 'fiber_pool'
-require 'github_search'
+require './lib/fiber_pool'
+require './lib/github_search'
 
 pool = FiberPool.new(3)
 
