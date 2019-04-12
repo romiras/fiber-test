@@ -4,14 +4,24 @@ require './lib/github_search'
 
 pool = FiberPool.new(3)
 
+def print_result(line, repo_name)
+  repo_name ||= '-none-'
+  puts "#{line}: #{repo_name}"
+end
+
 # Read phrases from a file, printing the first github repo matching each
 EM.run do
   File.open('phrases.txt') do |f|
     while (line = f.gets)
       line = line.strip
       pool.enqueue(line) do |line|
-        repo = GithubSearch.new(line).first
-        puts "#{line}: #{repo['name']}"
+        results = GithubSearch.new(line).results
+        if results.any?
+          repo = results.first
+          print_result(line, repo['name'])
+        else
+          print_result(line, nil)
+        end
       end
     end
   end

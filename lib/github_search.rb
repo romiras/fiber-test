@@ -6,12 +6,12 @@ class GithubSearch
     @term = term
   end
   
-  def first
-    result['repositories'].first
+  def results
+    result['items'] || []
   end
   
   def url
-    "https://github.com/api/v2/json/repos/search/#{URI.encode(@term)}"
+    "https://api.github.com/search/repositories?q=#{URI.encode(@term)}"
   end
   
   def result 
@@ -21,6 +21,6 @@ class GithubSearch
     http.callback { fiber.resume(http) }
     Fiber.yield
     
-    JSON.parse(http.response)
+    http.response_header.status == 200 ? JSON.parse(http.response) : {}
   end
 end
